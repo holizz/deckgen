@@ -23,6 +23,19 @@ class TestDeck(unittest.TestCase):
         self.assertEqual(deck[0], 21)
         self.assertEqual(deck[51], 6)
 
+    def testGenerateSameKey(self):
+        deck = Deck()
+        deck.generateSameKey()
+        print(repr(deck.sameKey))
+        self.assertTrue(isinstance(deck.sameKey, str))
+
+    def testGenerateSameKey(self):
+        deck = Deck()
+        deck.generateSameKey()
+        cryptedCards = deck.getSameKeyEncrypted()
+        print(cryptedCards)
+        self.assertNotEqual(cryptedCards[0], 0)
+
     # def testLoading(self):
     #     deck.load(data['deck'])
 
