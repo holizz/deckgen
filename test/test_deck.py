@@ -4,43 +4,53 @@ from deckgen.deck import Deck
 
 class TestDeck(unittest.TestCase):
     def setUp(self):
+        self.defaultCards = ['%02d' % x for x in list(range(52))]
         self.sampleCards = [
                 21, 34, 22, 20, 23, 49, 15, 19, 17, 37, 32, 14,  2,
                 27, 24, 29, 12, 31, 33, 48, 50, 39, 36, 40, 10, 38,
                 45, 25,  1, 47, 18,  3, 16, 26, 28, 13,  4,  0,  8,
                 43, 51, 35,  7, 30, 11,  9, 42,  5, 41, 44, 46,  6,
                 ]
+        self.deck = Deck()
 
     def testDefaultInstantiation(self):
-        deck = Deck()
-        self.assertEqual(deck.cards, list(range(0,52)))
-        self.assertEqual(deck[0], 0)
-        self.assertEqual(deck[51], 51)
+        self.assertEqual(self.deck.cards, self.defaultCards)
+        self.assertEqual(self.deck[0], '00')
+        self.assertEqual(self.deck[51], '51')
 
     def testInstantiation(self):
-        deck = Deck(self.sampleCards)
-        self.assertEqual(deck.cards, self.sampleCards)
-        self.assertEqual(deck[0], 21)
-        self.assertEqual(deck[51], 6)
+        self.deck = Deck(self.sampleCards)
+        self.assertEqual(self.deck.cards, self.sampleCards)
+        self.assertEqual(self.deck[0], '21')
+        self.assertEqual(self.deck[51], '06')
 
     def testGenerateSameKey(self):
-        deck = Deck()
-        deck.generateSameKey()
-        print(repr(deck.sameKey))
-        self.assertTrue(isinstance(deck.sameKey, str))
+        self.deck.generateSameKey()
+        print(repr(self.deck.sameKey))
+        self.assertTrue(isinstance(self.deck.sameKey, str))
 
     def testGenerateSameKey(self):
-        deck = Deck()
-        deck.generateSameKey()
-        cryptedCards = deck.getSameKeyEncrypted()
-        print(cryptedCards)
-        self.assertNotEqual(cryptedCards[0], 0)
+        self.deck.generateSameKey()
+        cryptedCards = self.deck.getSameKeyEncrypted()
+        self.assertNotEqual(cryptedCards[0], '00')
 
-    # def testLoading(self):
-    #     deck.load(data['deck'])
+    def testShuffle(self):
+        self.deck.shuffle()
+        # This test will be correct most of the time
+        self.assertNotEqual(self.deck.cards, self.defaultCards)
 
-    # def testShuffle(self):
-    #     deck.shuffle()
+    def testLoad(self):
+        self.deck.load(self.sampleCards)
+        self.assertEqual(self.deck.cards, self.sampleCards)
+        self.assertEqual(self.deck[0], '21')
+
+    def testSameKeyDecryptAndLoad(self):
+        self.deck.generateSameKey()
+        cards = ['xxy', 'xyz', 'xxx']
+        self.deck.sameKeyDecryptAndLoad(cards)
+        self.assertNotEqual(self.deck.cards, cards)
+        self.assertNotEqual(self.deck[0], 'xxy')
+
 
         # deck.generateSameKey()
         # deck.getSameKeyEncrypted()

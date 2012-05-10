@@ -1,14 +1,12 @@
 import Crypto.Random
+import Crypto.Random.random
 import Crypto.Cipher.XOR
 
 class Deck:
     DEFAULT_CARDS = list(range(52))
 
     def __init__(self, cards = None):
-        if cards:
-            self.cards = cards
-        else:
-            self.cards = self.DEFAULT_CARDS
+        self.load(cards)
 
     def __getitem__(self, index):
         return self.cards[index]
@@ -21,6 +19,26 @@ class Deck:
     def getSameKeyEncrypted(self):
         cryptedCards = []
         for card in self.cards:
-            cryptedCards.append(self.sameAlgo.encrypt('%02d' % card))
+            cryptedCards.append(self.sameAlgo.encrypt(card))
 
         return cryptedCards
+
+    def shuffle(self):
+        Crypto.Random.random.shuffle(self.cards)
+
+    def load(self, cards):
+        if cards:
+            self.cards = cards
+        else:
+            self.cards = self.DEFAULT_CARDS
+
+        for c in range(len(self.cards)):
+            if isinstance(self.cards[c], int):
+                self.cards[c] = '%02d' % self.cards[c]
+
+    def sameKeyDecryptAndLoad(self, cards):
+        self.load(cards)
+        plainCards = []
+        for card in self.cards:
+            plainCards.append(self.sameAlgo.decrypt(card))
+        self.cards = plainCards
