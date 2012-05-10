@@ -1,4 +1,5 @@
 import Crypto.Random
+import Crypto.Cipher.XOR
 
 class Deck:
     DEFAULT_CARDS = list(range(52))
@@ -14,9 +15,12 @@ class Deck:
 
     def generateSameKey(self):
         self.sameKey = Crypto.Random.new().read(16)
-        self.sameAlgo = someCipherOrAnother
+        #TODO: use a cipher that prevents known-plaintext attacks
+        self.sameAlgo = Crypto.Cipher.XOR.new(self.sameKey)
 
     def getSameKeyEncrypted(self):
-        self.sameCryptedCards = []
+        cryptedCards = []
         for card in self.cards:
-            doSomething()
+            cryptedCards.append(self.sameAlgo.encrypt('%02d' % card))
+
+        return cryptedCards
