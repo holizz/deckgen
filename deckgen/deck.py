@@ -42,3 +42,18 @@ class Deck:
         for card in self.cards:
             plainCards.append(self.sameAlgo.decrypt(card))
         self.cards = plainCards
+
+    def generateIndividualKeys(self):
+        self.indivKey = []
+        self.indivAlgo = []
+
+        for i in range(len(self.cards)):
+            self.indivKey.append(Crypto.Random.new().read(16))
+            self.indivAlgo.append(Crypto.Cipher.XOR.new(self.indivKey[i]))
+
+    def getIndividualKeyEncrypted(self):
+        cryptedCards = []
+        for i in range(len(self.cards)):
+            cryptedCards.append(self.indivAlgo[i].encrypt(self.cards[i]))
+
+        return cryptedCards

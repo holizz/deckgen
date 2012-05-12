@@ -26,7 +26,6 @@ class TestDeck(unittest.TestCase):
 
     def testGenerateSameKey(self):
         self.deck.generateSameKey()
-        print(repr(self.deck.sameKey))
         self.assertTrue(isinstance(self.deck.sameKey, str))
 
     def testGenerateSameKey(self):
@@ -51,15 +50,10 @@ class TestDeck(unittest.TestCase):
         self.assertNotEqual(self.deck.cards, cards)
         self.assertNotEqual(self.deck[0], 'xxy')
 
-
-        # deck.generateSameKey()
-        # deck.getSameKeyEncrypted()
-        # deck.sameKeyDecryptAndLoad(data['deck'])
-        # deck.generateIndividualKeys()
-        # deck.getIndividualKeyEncrypted()
-        # deck.sameKeyDecryptAndLoad(data['deck'])
-        # deck.generateIndividualKeys()
-        # deck.getIndividualKeyEncrypted()
+    def testGenerateIndividualKeys(self):
+        self.deck.generateIndividualKeys()
+        crypted = self.deck.getIndividualKeyEncrypted()
+        self.assertNotEqual(crypted[0], '00')
 
 if __name__ == '__main__':
     unittest.main()
