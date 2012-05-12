@@ -27,7 +27,7 @@ class Generator:
             self.state = 'WAIT-AFTER-INDIVIDUALLYCRYPTEDDECK'
             self.output({'action': 'INDIVIDUALLYCRYPTEDDECK', 'deck': self.deck.getIndividualKeyEncrypted()})
 
-        elif self.state == 'WAIT-AFTER-INDIVIDUALLYCRYPTEDDECK' and data['action'] == 'INDIVIDUALLYCRYPTEDDECK':
+        elif self.state == 'WAIT-AFTER-SAMECRYPTEDDECK' and data['action'] == 'INDIVIDUALLYCRYPTEDDECK':
             # 11. Bob decrypts each card using his key B. This still leaves Alice's individual encryption in place though so he cannot know which card is which.
             self.deck.sameKeyDecryptAndLoad(data['deck'])
             # 12. Bob picks one encryption key for each card (B1, B2, etc.) and encrypts them individually.
@@ -37,19 +37,19 @@ class Generator:
             self.output({'action': 'FINALDECK', 'deck': self.deck.getIndividualKeyEncrypted()})
 
             self.localCallback(self.deck)
-            self.callback()
 
         elif self.state == 'WAIT-AFTER-INDIVIDUALLYCRYPTEDDECK' and data['action'] == 'FINALDECK':
             # 14. Alice publishes the deck for everyone playing (in this case only Alice and Bob, see below on expansion though).
             self.deck.load(data['deck'])
 
+            self.state = 'WAIT-AFTER-FINALDECK'
+
             self.localCallback(self.deck)
-            self.callback()
 
         else:
-            raise NotImplementedError
+            raise NotImplementedError('state: %s, action: %s' % (self.state, data['action']))
 
-    def generateDeck(self, callback):
+    def generateDeck(self):
         #  1. Alice and Bob agree on a certain "deck" of cards. In practice, this means they agree on a set of numbers or other data such that each element of the set represents a card.
         self.deck = Deck()
         #  2. Alice picks an encryption key A and uses this to encrypt each card of the deck.
@@ -59,8 +59,3 @@ class Generator:
         #  4. Alice passes the encrypted and shuffled deck to Bob. With the encryption in place, Bob cannot know which card is which.
         self.state = 'WAIT-AFTER-NEWDECK'
         self.output({'action': 'NEWDECK', 'deck': self.deck.getSameKeyEncrypted()})
-
-        # Send new card to the upstream application
-        newCard = Card()
-        self.handleNewCard(newCard)
-        callback()

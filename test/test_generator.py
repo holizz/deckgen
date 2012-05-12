@@ -12,17 +12,21 @@ class TestGenerator(unittest.TestCase):
 
     def aliceCallback(self, deck):
         self.aliceDeck = deck
+        self.assertEqual(len(self.aliceDeck.cards), 52)
+        self.aliceCallbackCalled = True
     def bobCallback(self, deck):
         self.bobDeck = deck
+        self.assertEqual(len(self.bobDeck.cards), 52)
+        self.bobCallbackCalled = True
 
-    def _testGenerateDeck(self):
-        self.assertEqual(self.aliceDeck, [])
-        self.assertEqual(self.bobDeck, [])
-        self.callbackCalled = True
     def testGenerateDeck(self):
-        self.callbackCalled = False
-        self.alice.generateDeck(self._testGenerateDeck)
-        self.assertTrue(self.callbackCalled, 'Expected callback to be called')
+        self.aliceCallbackCalled = False
+        self.bobCallbackCalled = False
+
+        self.alice.generateDeck()
+
+        self.assertTrue(self.aliceCallbackCalled, 'Expected alice-callback to be called')
+        self.assertTrue(self.bobCallbackCalled, 'Expected bob-callback to be called')
 
 if __name__ == '__main__':
     unittest.main()
