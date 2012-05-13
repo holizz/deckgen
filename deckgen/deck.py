@@ -38,7 +38,7 @@ class Deck:
         if cards:
             self.cards = cards
         else:
-            self.cards = self.DEFAULT_CARDS
+            self.cards = list(self.DEFAULT_CARDS)
 
         for c in range(len(self.cards)):
             if isinstance(self.cards[c], int):
