@@ -2,7 +2,7 @@ import Crypto.Random
 import Crypto.Random.random
 import Crypto.Cipher.XOR
 
-import deckgen.protocol
+from deckgen.protocol import Protocol
 
 class Deck:
     DEFAULT_CARDS = list(range(52))
@@ -10,6 +10,7 @@ class Deck:
     def __init__(self, callback = None, cards = None):
         self._callback = callback
         self.load(cards)
+        self.protocol = Protocol(self)
 
     def __getitem__(self, index):
         return self.cards[index]
@@ -64,3 +65,6 @@ class Deck:
             cryptedCards.append(self.indivAlgo[i].encrypt(self.cards[i]))
 
         return cryptedCards
+
+    def generateDeck(self):
+        self.protocol.generateDeck()

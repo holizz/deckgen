@@ -1,15 +1,15 @@
 import unittest
 
-import deckgen.deck
-import deckgen.protocol
+from deckgen.deck import Deck
+from deckgen.protocol import Protocol
 
 class TestProtocol(unittest.TestCase):
     def setUp(self):
-        self.aliceDeck = deckgen.deck.Deck(self.aliceCallback)
-        self.bobDeck = deckgen.deck.Deck(self.bobCallback)
+        self.aliceDeck = Deck(self.aliceCallback)
+        self.bobDeck = Deck(self.bobCallback)
 
-        self.alice = deckgen.protocol.Protocol(self.aliceDeck)
-        self.bob   = deckgen.protocol.Protocol(self.bobDeck)
+        self.alice = Protocol(self.aliceDeck)
+        self.bob   = Protocol(self.bobDeck)
 
         self.alice.output = self.bob.input
         self.bob.output   = self.alice.input
