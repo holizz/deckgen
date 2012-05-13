@@ -19,18 +19,6 @@ class Deck:
         if self._callback:
             self._callback()
 
-    def generateSameKey(self):
-        self.sameKey = Crypto.Random.new().read(16)
-        #TODO: use a cipher that prevents known-plaintext attacks
-        self.sameAlgo = Crypto.Cipher.XOR.new(self.sameKey)
-
-    def getSameKeyEncrypted(self):
-        cryptedCards = []
-        for card in self.cards:
-            cryptedCards.append(self.sameAlgo.encrypt(card))
-
-        return cryptedCards
-
     def shuffle(self):
         Crypto.Random.random.shuffle(self.cards)
 
@@ -43,6 +31,20 @@ class Deck:
         for c in range(len(self.cards)):
             if isinstance(self.cards[c], int):
                 self.cards[c] = '%02d' % self.cards[c]
+
+    ## Deck generation
+
+    def generateSameKey(self):
+        self.sameKey = Crypto.Random.new().read(16)
+        #TODO: use a cipher that prevents known-plaintext attacks
+        self.sameAlgo = Crypto.Cipher.XOR.new(self.sameKey)
+
+    def getSameKeyEncrypted(self):
+        cryptedCards = []
+        for card in self.cards:
+            cryptedCards.append(self.sameAlgo.encrypt(card))
+
+        return cryptedCards
 
     def sameKeyDecryptAndLoad(self, cards):
         self.load(cards)
@@ -57,7 +59,7 @@ class Deck:
 
         for i in range(len(self.cards)):
             self.indivKey.append(Crypto.Random.new().read(16))
-            self.indivAlgo.append(Crypto.Cipher.XOR.new(self.indivKey[i]))
+            self.indivAlgo.append(Crypto.Cipher.XOR.new(self.indivKey[-1]))
 
     def getIndividualKeyEncrypted(self):
         cryptedCards = []
@@ -66,5 +68,23 @@ class Deck:
 
         return cryptedCards
 
+    ## Generate deck
+
     def generateDeck(self):
         self.protocol.generateDeck()
+
+    ## Reveal cards
+
+    def revealToMe(self, cards):
+        self.protocol.revealToMe(cards)
+
+    def revealToOpponent(self, cards):
+        keys = [self.indivKey[i] for i in cards]
+        self.protocol.revealToOpponent(cards, keys)
+
+    def revealToBoth(self, cards):
+        keys = [self.indivKey[i] for i in cards]
+        self.protocol.revealToBoth(cards, keys)
+
+    def verifyDeck(self):
+        self.protocol.revealToBoth(list(range(len(self.cards))), self.indivKey)

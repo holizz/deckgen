@@ -55,3 +55,12 @@ class Protocol:
         #  4. Alice passes the encrypted and shuffled deck to Bob. With the encryption in place, Bob cannot know which card is which.
         self.state = 'WAIT-AFTER-NEWDECK'
         self.output({'action': 'NEWDECK', 'deck': self.deck.getSameKeyEncrypted()})
+
+    def revealToMe(self, card):
+        pass
+
+    def revealToOpponent(self, card, key):
+        pass
+
+    def revealToBoth(self, card, key):
+        pass
