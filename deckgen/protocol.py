@@ -1,15 +1,12 @@
-from deckgen.card import Card
-from deckgen.deck import Deck
-
-class Generator:
-    def __init__(self, localCallback):
+class Protocol:
+    def __init__(self, deck):
+        self.deck = deck
         self.output = None
         self.state = 'WAIT'
-        self.localCallback = localCallback
 
     def input(self, data):
         if self.state == 'WAIT' and data['action'] == 'NEWDECK':
-            self.deck = Deck(data['deck'])
+            self.deck.load(data['deck'])
             #  5. Bob picks an encryption key B and uses this to encrypt each card of the encrypted and shuffled deck.
             self.deck.generateSameKey()
             #  6. Bob shuffles the deck.
@@ -36,7 +33,7 @@ class Generator:
             self.state = 'WAIT-AFTER-FINALDECK'
             self.output({'action': 'FINALDECK', 'deck': self.deck.getIndividualKeyEncrypted()})
 
-            self.localCallback(self.deck)
+            self.deck.callback()
 
         elif self.state == 'WAIT-AFTER-INDIVIDUALLYCRYPTEDDECK' and data['action'] == 'FINALDECK':
             # 14. Alice publishes the deck for everyone playing (in this case only Alice and Bob, see below on expansion though).
@@ -44,14 +41,13 @@ class Generator:
 
             self.state = 'WAIT-AFTER-FINALDECK'
 
-            self.localCallback(self.deck)
+            self.deck.callback()
 
         else:
             raise NotImplementedError('state: %s, action: %s' % (self.state, data['action']))
 
     def generateDeck(self):
         #  1. Alice and Bob agree on a certain "deck" of cards. In practice, this means they agree on a set of numbers or other data such that each element of the set represents a card.
-        self.deck = Deck()
         #  2. Alice picks an encryption key A and uses this to encrypt each card of the deck.
         self.deck.generateSameKey()
         #  3. Alice shuffles the cards.

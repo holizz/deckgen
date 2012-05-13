@@ -2,14 +2,21 @@ import Crypto.Random
 import Crypto.Random.random
 import Crypto.Cipher.XOR
 
+import deckgen.protocol
+
 class Deck:
     DEFAULT_CARDS = list(range(52))
 
-    def __init__(self, cards = None):
+    def __init__(self, callback = None, cards = None):
+        self._callback = callback
         self.load(cards)
 
     def __getitem__(self, index):
         return self.cards[index]
+
+    def callback(self):
+        if self._callback:
+            self._callback()
 
     def generateSameKey(self):
         self.sameKey = Crypto.Random.new().read(16)

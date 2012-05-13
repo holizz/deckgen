@@ -1,21 +1,23 @@
 import unittest
 
-import deckgen.generator
+import deckgen.deck
+import deckgen.protocol
 
-class TestGenerator(unittest.TestCase):
+class TestProtocol(unittest.TestCase):
     def setUp(self):
-        self.alice = deckgen.generator.Generator(self.aliceCallback)
-        self.bob   = deckgen.generator.Generator(self.bobCallback)
+        self.aliceDeck = deckgen.deck.Deck(self.aliceCallback)
+        self.bobDeck = deckgen.deck.Deck(self.bobCallback)
+
+        self.alice = deckgen.protocol.Protocol(self.aliceDeck)
+        self.bob   = deckgen.protocol.Protocol(self.bobDeck)
 
         self.alice.output = self.bob.input
         self.bob.output   = self.alice.input
 
-    def aliceCallback(self, deck):
-        self.aliceDeck = deck
+    def aliceCallback(self):
         self.assertEqual(len(self.aliceDeck.cards), 52)
         self.aliceCallbackCalled = True
-    def bobCallback(self, deck):
-        self.bobDeck = deck
+    def bobCallback(self):
         self.assertEqual(len(self.bobDeck.cards), 52)
         self.bobCallbackCalled = True
 

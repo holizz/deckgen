@@ -19,7 +19,7 @@ class TestDeck(unittest.TestCase):
         self.assertEqual(self.deck[51], '51')
 
     def testInstantiation(self):
-        self.deck = Deck(self.sampleCards)
+        self.deck = Deck(None, self.sampleCards)
         self.assertEqual(self.deck.cards, self.sampleCards)
         self.assertEqual(self.deck[0], '21')
         self.assertEqual(self.deck[51], '06')
